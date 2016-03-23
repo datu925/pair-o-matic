@@ -4,7 +4,7 @@ class AvailabilitiesController < ApplicationController
   # GET /availabilities
   # GET /availabilities.json
   def index
-    @availabilities = Availability.all
+    @availabilities = Availability.where(user: current_user)
   end
 
   # GET /availabilities/1

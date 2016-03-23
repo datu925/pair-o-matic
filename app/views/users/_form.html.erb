@@ -13,27 +13,23 @@
 
   <div class="field">
     <%= f.label :first_name %><br>
-    <%= f.text_field :first_name %>
+    <%= f.text_field :first_name, autocomplete: :off %>
   </div>
   <div class="field">
     <%= f.label :last_name %><br>
-    <%= f.text_field :last_name %>
+    <%= f.text_field :last_name, autocomplete: :off %>
   </div>
   <div class="field">
     <%= f.label :email %><br>
-    <%= f.text_field :email %>
+    <%= f.text_field :email, autocomplete: :off %>
   </div>
   <div class="field">
-    <%= f.label :password_digest %><br>
-    <%= f.text_field :password_digest %>
+    <%= f.label "Password" %><br>
+    <%= f.text_field :password_digest, type: :password %>
   </div>
   <div class="field">
-    <%= f.label :avatar %><br>
-    <%= f.text_field :avatar %>
-  </div>
-  <div class="field">
-    <%= f.label :role %><br>
-    <%= f.text_field :role %>
+    <%= f.label "Role" %><br>
+    <%= f.select :role, ["Student","Guide","Admin"], {prompt: 'Select Role'} %>
   </div>
   <div class="actions">
     <%= f.submit %>
