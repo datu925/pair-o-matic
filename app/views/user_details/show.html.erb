@@ -1,0 +1,44 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Prefer in person:</strong>
+  <%= @user_detail.prefer_in_person %>
+</p>
+
+<p>
+  <strong>Time zone:</strong>
+  <%= @user_detail.time_zone %>
+</p>
+
+<p>
+  <strong>Prefer location cohort:</strong>
+  <%= @user_detail.prefer_location_cohort %>
+</p>
+
+<p>
+  <strong>Slack handle:</strong>
+  <%= @user_detail.slack_handle %>
+</p>
+
+<p>
+  <strong>Phone:</strong>
+  <%= @user_detail.phone %>
+</p>
+
+<p>
+  <strong>Cohort:</strong>
+  <%= @user_detail.cohort %>
+</p>
+
+<p>
+  <strong>Year:</strong>
+  <%= @user_detail.year %>
+</p>
+
+<p>
+  <strong>Location:</strong>
+  <%= @user_detail.location %>
+</p>
+
+<%= link_to 'Edit', edit_user_detail_path(@user_detail) %> |
+<%= link_to 'Back', user_details_path %>

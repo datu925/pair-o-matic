@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Start:</strong>
+  <%= @availability.start %>
+</p>
+
+<p>
+  <strong>End:</strong>
+  <%= @availability.end %>
+</p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @availability.status %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @availability.user_id %>
+</p>
+
+<p>
+  <strong>Desired challenge:</strong>
+  <%= @availability.desired_challenge_id %>
+</p>
+
+<p>
+  <strong>Enforce boundaries:</strong>
+  <%= @availability.enforce_boundaries %>
+</p>
+
+<%= link_to 'Edit', edit_availability_path(@availability) %> |
+<%= link_to 'Back', availabilities_path %>
