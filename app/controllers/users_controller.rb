@@ -3,7 +3,8 @@ class UsersController < ApplicationController
 
   # GET /users/1
   # GET /users/1.json
-  def show
+  def profile
+    @user = User.find_by(id: session[:user_id])
   end
 
   # GET /users/new
@@ -19,8 +20,8 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user.save
         session[:user_id] = @user.id
-        format.html { redirect_to @user, notice: 'User was successfully created.' }
-        format.json { render :show, status: :created, location: @user }
+        format.html { redirect_to :profile, notice: 'User was successfully created.' }
+        format.json { render :profile, status: :created, location: @user }
       else
         format.html { render :new }
         format.json { render json: @user.errors, status: :unprocessable_entity }
@@ -46,6 +47,6 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:first_name, :last_name, :email, :password_digest, :avatar, :role)
+      params.require(:user).permit(:first_name, :last_name, :email, :password, :avatar, :role)
     end
 end

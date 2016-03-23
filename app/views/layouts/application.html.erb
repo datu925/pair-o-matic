@@ -1,14 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>PairOMatic</title>
+  <title>Pair-O-Matic</title>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
 <body>
 
+<header>
+  <h1>Pair-O-Matic</h1>
+  <nav>
+    <ul>
+      <% if logged_in? %>
+        <li><a href="/profile">Profile</a></li>
+        <li><a href="/logout">Log out</a></li>
+      <% else %>
+        <li><a href="/register">Register</a></li>
+        <li><a href="/login">Log in</a></li>
+      <% end %>
+    </ul>
+  </nav>
+</header>
 <%= yield %>
-
+<footer>
+  <p>Started by Dan Turcza, Squirrels '16</p>
+</footer>
 </body>
 </html>

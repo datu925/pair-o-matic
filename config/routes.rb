@@ -1,8 +1,10 @@
 Rails.application.routes.draw do
-  root 'availabilities#new'
-  get '/login' => 'sessions#new'
+  root 'sessions#new'
+  get '/register' => 'users#new'
+  get '/login' => 'sessions#new', as: "login"
   post '/login' => 'sessions#create'
   get '/logout' => 'sessions#destroy'
+  get 'profile' => 'users#profile', as: "profile"
 
   resources :bookings
   resources :events

@@ -4,11 +4,12 @@ class SessionsController < ApplicationController
   end
 
   def create
-    if user = User.find_by(email: params[:email])
+    user = User.find_by(email: params[:session][:email])
+    if user.try(:authenticate, params[:session][:password])
       session[:user_id] = user.id
       redirect_to user
     else
-      "Invalid login"
+      render "Invalid login"
     end
   end
 
