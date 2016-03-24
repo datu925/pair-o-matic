@@ -4,7 +4,8 @@ Rails.application.routes.draw do
   get '/login' => 'sessions#new', as: "login"
   post '/login' => 'sessions#create'
   get '/logout' => 'sessions#destroy'
-  get 'profile' => 'users#profile', as: "profile"
+  get '/profile' => 'users#profile', as: "profile"
+  get 'availabilities/other' => 'availabilities#get_other'
 
   resources :bookings
   resources :events
