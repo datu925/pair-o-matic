@@ -26,26 +26,32 @@ $(function() {
           start: startFormatted,
           end: endFormatted,
         }
-        $('#calendar').fullCalendar('renderEvent',eventData);
-        $.ajax({
-          url: '/availabilities',
-          method: 'POST',
-          data: {availability: { start: startFormatted, end: endFormatted }},
-          success: refetch_events_and_close_dialog
-        });
+
+        if (checkOverlap(start, end)) {
+          toastr.error("Your availabilities cannot overlap!");
+        } else {
+          $('#calendar').fullCalendar('renderEvent',eventData);
+          $.ajax({
+            url: '/availabilities',
+            method: 'POST',
+            data: {availability: { start: startFormatted, end: endFormatted }},
+            success: refetch_events_and_close_dialog
+          });
+        }
       },
 
       eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc){
-        moveEvent(event, dayDelta, minuteDelta, allDay);
+        moveEvent(event, dayDelta, minuteDelta, allDay, revertFunc);
       },
 
       eventResize: function(event, dayDelta, minuteDelta, revertFunc){
-        resizeEvent(event, dayDelta, minuteDelta);
+        resizeEvent(event, dayDelta, minuteDelta, revertFunc);
       },
 
       eventClick: function(event, jsEvent, view){
-        debugger;
-        showEventDetails(event);
+        if (event.type == "user") {
+          showEventDetails(event);
+        }
       },
 
   })
@@ -55,22 +61,32 @@ $(function() {
 
 
 
-function moveEvent(event, dayDelta, minuteDelta, allDay){
+function moveEvent(event, dayDelta, minuteDelta, allDay, revertFunc){
+  if (checkOverlap(event.start, event.end)) {
+    toastr.error("Your availabilities cannot overlap!");
+    revertFunc();
+  } else {
     jQuery.ajax({
         data: 'id=' + event.id + '&title=' + event.title + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&all_day=' + allDay,
         dataType: 'script',
         type: 'post',
         url: "/availabilities/move"
     });
+  }
 }
 
-function resizeEvent(event, dayDelta, minuteDelta){
+function resizeEvent(event, dayDelta, minuteDelta, revertFunc){
+  if (checkOverlap(event.start, event.end)) {
+    toastr.error("Your availabilities cannot overlap!");
+    revertFunc();
+  } else {
     jQuery.ajax({
         data: 'id=' + event.id + '&title=' + event.title + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta,
         dataType: 'script',
         type: 'post',
         url: "/availabilities/resize"
     });
+  }
 }
 
 function showEventDetails(event){
@@ -118,3 +134,28 @@ function refetch_events_and_close_dialog() {
   $('.dialog:visible').dialog('destroy');
 }
 
+function checkOverlap(eventStart, eventEnd) {
+  var start = new Date(eventStart);
+  var end = new Date(eventEnd);
+
+  var overlap = $('#calendar').fullCalendar('clientEvents', function(ev) {
+    if( ev == event || ev.id === undefined) {
+      return false;
+    }
+    var estart = new Date(ev.start);
+    var eend = new Date(ev.end);
+
+    return (
+    ( Math.round(start) > Math.round(estart) && Math.round(start) < Math.round(eend) )
+    ||
+    ( Math.round(end) > Math.round(estart) && Math.round(end) < Math.round(eend) )
+    ||
+    ( Math.round(start) <= Math.round(estart) && Math.round(end) >= Math.round(eend) )
+    );
+  });
+  if (overlap.length){
+    return true;
+  } else {
+    return false;
+  }
+}
