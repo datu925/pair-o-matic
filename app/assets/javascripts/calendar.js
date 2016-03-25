@@ -51,6 +51,8 @@ $(function() {
       eventClick: function(event, jsEvent, view){
         if (event.type == "user") {
           showEventDetails(event);
+        } else {
+
         }
       },
 
@@ -62,7 +64,10 @@ $(function() {
 
 
 function moveEvent(event, dayDelta, minuteDelta, allDay, revertFunc){
-  if (checkOverlap(event.start, event.end)) {
+  if (event.type === "group") {
+    toastr.error("You can't modify group availability!");
+    revertFunc();
+  } else if (checkOverlap(event.start, event.end)) {
     toastr.error("Your availabilities cannot overlap!");
     revertFunc();
   } else {
@@ -76,7 +81,10 @@ function moveEvent(event, dayDelta, minuteDelta, allDay, revertFunc){
 }
 
 function resizeEvent(event, dayDelta, minuteDelta, revertFunc){
-  if (checkOverlap(event.start, event.end)) {
+  if (event.type === "group") {
+    toastr.error("You can't modify group availability!");
+    revertFunc();
+  } else if (checkOverlap(event.start, event.end)) {
     toastr.error("Your availabilities cannot overlap!");
     revertFunc();
   } else {
