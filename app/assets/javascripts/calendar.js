@@ -147,7 +147,7 @@ function checkOverlap(eventStart, eventEnd) {
   var end = new Date(eventEnd);
 
   var overlap = $('#calendar').fullCalendar('clientEvents', function(ev) {
-    if(ev.type = "group") {
+    if(ev.type === "group") {
       return false;
     }
     var estart = new Date(ev.start);
