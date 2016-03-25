@@ -15,21 +15,24 @@ $(function() {
       dragOpacity: "0.5",
       events: '/availabilities/other',
 
-        select: function(start, end){
-          var eventData = {
-            allDay: false,
-            color: '#C2110D',
-            title: 'Available',
-            start: moment(start).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
-            end: moment(end).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")
-          }
-          $('#calendar').fullCalendar('renderEvent',eventData);
-          $.ajax({
-            url: '/availabilities',
-            method: 'POST',
-            data: {availability: {start: moment(start).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"), end: moment(end).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")}},
-            success: refetch_events_and_close_dialog
-          });
+      select: function(start, end){
+        var startFormatted = moment(start).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")
+        var endFormatted = moment(end).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")
+
+        var eventData = {
+          allDay: false,
+          color: '#C2110D',
+          title: 'Available',
+          start: startFormatted,
+          end: endFormatted,
+        }
+        $('#calendar').fullCalendar('renderEvent',eventData);
+        $.ajax({
+          url: '/availabilities',
+          method: 'POST',
+          data: {availability: { start: startFormatted, end: endFormatted }},
+          success: refetch_events_and_close_dialog
+        });
       },
 
       eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc){
@@ -38,6 +41,11 @@ $(function() {
 
       eventResize: function(event, dayDelta, minuteDelta, revertFunc){
         resizeEvent(event, dayDelta, minuteDelta);
+      },
+
+      eventClick: function(event, jsEvent, view){
+        debugger;
+        showEventDetails(event);
       },
 
   })
@@ -95,8 +103,7 @@ function showEventDetails(event){
 }
 
 function deleteEvent(event_id, delete_all){
-  var address = $('#studio_path').data('address');
-  var url = address + "/" + event_id;
+  var url = "/availabilities/" + event_id;
   jQuery.ajax({
     data: 'delete_all=' + delete_all,
     dataType: 'script',
