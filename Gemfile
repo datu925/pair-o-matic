@@ -33,10 +33,18 @@ gem 'jquery-ui-rails'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+
+group :test do
+  gem 'shoulda-matchers', '~> 3.1'
+  gem 'simplecov', :require => false
+  gem "factory_girl_rails", "~> 4.0"
+end
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
   gem 'jazz_fingers'
+  gem 'rspec-rails', '~> 3.0'
 end
 
 group :development do

@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   get '/logout' => 'sessions#destroy'
   get '/profile' => 'users#profile', as: "profile"
   get 'availabilities/other' => 'availabilities#get_other'
+  post 'availabilities/move' => 'availabilities#move'
+  post 'availabilities/resize' => 'availabilities#resize'
 
   resources :bookings
   resources :events
