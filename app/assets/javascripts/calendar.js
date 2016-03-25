@@ -15,29 +15,45 @@ $(function() {
       dragOpacity: "0.5",
       events: '/availabilities/other',
 
-        select: function(start, end){
-          var eventData = {
-            allDay: false,
-            color: '#C2110D',
-            title: 'Available',
-            start: moment(start).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
-            end: moment(end).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")
-          }
+      select: function(start, end){
+        var startFormatted = moment(start).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")
+        var endFormatted = moment(end).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")
+
+        var eventData = {
+          allDay: false,
+          color: '#C2110D',
+          title: 'Available',
+          start: startFormatted,
+          end: endFormatted,
+        }
+
+        if (checkOverlap(start, end)) {
+          toastr.error("Your availabilities cannot overlap!");
+        } else {
           $('#calendar').fullCalendar('renderEvent',eventData);
           $.ajax({
             url: '/availabilities',
             method: 'POST',
-            data: {availability: {start: moment(start).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"), end: moment(end).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")}},
+            data: {availability: { start: startFormatted, end: endFormatted }},
             success: refetch_events_and_close_dialog
           });
+        }
       },
 
       eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc){
-        moveEvent(event, dayDelta, minuteDelta, allDay);
+        moveEvent(event, dayDelta, minuteDelta, allDay, revertFunc);
       },
 
       eventResize: function(event, dayDelta, minuteDelta, revertFunc){
-        resizeEvent(event, dayDelta, minuteDelta);
+        resizeEvent(event, dayDelta, minuteDelta, revertFunc);
+      },
+
+      eventClick: function(event, jsEvent, view){
+        if (event.type == "user") {
+          showEventDetails(event);
+        } else {
+
+        }
       },
 
   })
@@ -47,22 +63,38 @@ $(function() {
 
 
 
-function moveEvent(event, dayDelta, minuteDelta, allDay){
+function moveEvent(event, dayDelta, minuteDelta, allDay, revertFunc){
+  if (event.type === "group") {
+    toastr.error("You can't modify group availability!");
+    revertFunc();
+  } else if (checkOverlap(event.start, event.end)) {
+    toastr.error("Your availabilities cannot overlap!");
+    revertFunc();
+  } else {
     jQuery.ajax({
         data: 'id=' + event.id + '&title=' + event.title + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&all_day=' + allDay,
         dataType: 'script',
         type: 'post',
         url: "/availabilities/move"
     });
+  }
 }
 
-function resizeEvent(event, dayDelta, minuteDelta){
+function resizeEvent(event, dayDelta, minuteDelta, revertFunc){
+  if (event.type === "group") {
+    toastr.error("You can't modify group availability!");
+    revertFunc();
+  } else if (checkOverlap(event.start, event.end)) {
+    toastr.error("Your availabilities cannot overlap!");
+    revertFunc();
+  } else {
     jQuery.ajax({
         data: 'id=' + event.id + '&title=' + event.title + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta,
         dataType: 'script',
         type: 'post',
         url: "/availabilities/resize"
     });
+  }
 }
 
 function showEventDetails(event){
@@ -95,8 +127,7 @@ function showEventDetails(event){
 }
 
 function deleteEvent(event_id, delete_all){
-  var address = $('#studio_path').data('address');
-  var url = address + "/" + event_id;
+  var url = "/availabilities/" + event_id;
   jQuery.ajax({
     data: 'delete_all=' + delete_all,
     dataType: 'script',
@@ -111,3 +142,28 @@ function refetch_events_and_close_dialog() {
   $('.dialog:visible').dialog('destroy');
 }
 
+function checkOverlap(eventStart, eventEnd) {
+  var start = new Date(eventStart);
+  var end = new Date(eventEnd);
+
+  var overlap = $('#calendar').fullCalendar('clientEvents', function(ev) {
+    if(ev.type === "group") {
+      return false;
+    }
+    var estart = new Date(ev.start);
+    var eend = new Date(ev.end);
+
+    return (
+    ( Math.round(start) > Math.round(estart) && Math.round(start) < Math.round(eend) )
+    ||
+    ( Math.round(end) > Math.round(estart) && Math.round(end) < Math.round(eend) )
+    ||
+    ( Math.round(start) <= Math.round(estart) && Math.round(end) >= Math.round(eend) )
+    );
+  });
+  if (overlap.length){
+    return true;
+  } else {
+    return false;
+  }
+}

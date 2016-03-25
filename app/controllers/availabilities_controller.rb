@@ -66,10 +66,10 @@ class AvailabilitiesController < ApplicationController
     user = User.find_by(id: session[:user_id])
     other_availabilities = Availability.other_availabilities(user.id)
     event_objects = other_availabilities.map do |availability|
-      { :color => '#34AADC', :title => 'Group', :start => "#{availability.start.iso8601}", :end => "#{availability.end.iso8601}", :allDay => false, :overlap => false, id: availability.id}
+      { :color => '#34AADC', :title => 'Group', :start => "#{availability.start.iso8601}", :end => "#{availability.end.iso8601}", :allDay => false, :overlap => false, id: availability.id, type: "group"}
     end
     user.availabilities.each do |availability|
-      event_objects << { :color => '#C2110D', :title => 'Individual', :start => "#{availability.start.iso8601}", :end => "#{availability.end.iso8601}", :allDay => false, :overlap => false, id: availability.id}
+      event_objects << { :color => '#C2110D', :title => 'Individual', :start => "#{availability.start.iso8601}", :end => "#{availability.end.iso8601}", :allDay => false, :overlap => false, id: availability.id, type: "user"}
     end
     render json: event_objects
   end
