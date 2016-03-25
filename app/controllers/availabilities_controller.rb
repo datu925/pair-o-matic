@@ -4,7 +4,7 @@ class AvailabilitiesController < ApplicationController
   # GET /availabilities
   # GET /availabilities.json
   def index
-    @availabilities = Availability.all
+    @availabilities = Availability.where(user: current_user)
   end
 
   # GET /availabilities/1
@@ -25,6 +25,7 @@ class AvailabilitiesController < ApplicationController
   # POST /availabilities.json
   def create
     @availability = Availability.new(availability_params)
+    @availability.user_id = session[:user_id]
 
     respond_to do |format|
       if @availability.save
@@ -59,6 +60,15 @@ class AvailabilitiesController < ApplicationController
       format.html { redirect_to availabilities_url, notice: 'Availability was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  def get_other
+    user = User.find_by(id: session[:user_id])
+    other_availabilities = Availability.other_availabilities(user.id)
+    event_objects = other_availabilities.map do |availability|
+      { :color => '#34AADC', :title => 'Group', :start => DateTime.parse(availability.start.to_s).iso8601, :end => DateTime.parse(availability.end.to_s).iso8601, :allDay => false, :overlap => false}
+    end
+    render json: event_objects
   end
 
   private

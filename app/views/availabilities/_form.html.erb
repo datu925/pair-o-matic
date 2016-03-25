@@ -13,27 +13,19 @@
 
   <div class="field">
     <%= f.label :start %><br>
-    <%= f.datetime_select :start %>
+    <%= f.datetime_select :start, ampm: true, default: 1.day.from_now %>
   </div>
   <div class="field">
     <%= f.label :end %><br>
-    <%= f.datetime_select :end %>
+    <%= f.datetime_select :end, ampm: true, default: 1.day.from_now %>
   </div>
   <div class="field">
-    <%= f.label :status %><br>
-    <%= f.text_field :status %>
+    <%= f.label "Desired challenge (optional)" %><br>
+    <%= f.text_field :desired_challenge_id %>
   </div>
   <div class="field">
-    <%= f.label :user_id %><br>
-    <%= f.number_field :user_id %>
-  </div>
-  <div class="field">
-    <%= f.label :desired_challenge_id %><br>
-    <%= f.number_field :desired_challenge_id %>
-  </div>
-  <div class="field">
-    <%= f.label :enforce_boundaries %><br>
-    <%= f.text_field :enforce_boundaries %>
+    <%= f.label "Enforce boundaries?" %><br>
+    <%= f.check_box :enforce_boundaries %>
   </div>
   <div class="actions">
     <%= f.submit %>

@@ -1,0 +1,23 @@
+header {
+  margin-bottom: 10px;
+}
+
+header * {
+  display: inline;
+}
+
+nav {
+  float: right;
+}
+
+footer {
+  width: 100%;
+  z-index: 10;
+  background-color: white;
+  position: fixed;
+  bottom: 0px;
+}
+
+#page-content {
+  margin-bottom: 50px;
+}
