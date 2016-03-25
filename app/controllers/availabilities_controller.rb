@@ -66,9 +66,39 @@ class AvailabilitiesController < ApplicationController
     user = User.find_by(id: session[:user_id])
     other_availabilities = Availability.other_availabilities(user.id)
     event_objects = other_availabilities.map do |availability|
-      { :color => '#34AADC', :title => 'Group', :start => DateTime.parse(availability.start.to_s).iso8601, :end => DateTime.parse(availability.end.to_s).iso8601, :allDay => false, :overlap => false}
+      { :color => '#34AADC', :title => 'Group', :start => "#{availability.start.iso8601}", :end => "#{availability.end.iso8601}", :allDay => false, :overlap => false, id: availability.id}
+    end
+    user.availabilities.each do |availability|
+      event_objects << { :color => '#C2110D', :title => 'Individual', :start => "#{availability.start.iso8601}", :end => "#{availability.end.iso8601}", :allDay => false, :overlap => false, id: availability.id}
     end
     render json: event_objects
+  end
+
+
+
+  def move
+    @availability = Availability.find_by_id(params[:id])
+    if @availability
+      @availability.start = (params[:minute_delta].to_i).minutes.from_now((params[:day_delta].to_i).days.from_now(@availability.start))
+      @availability.end = (params[:minute_delta].to_i).minutes.from_now((params[:day_delta].to_i).days.from_now(@availability.end))
+      @availability.save
+    end
+    render :nothing => true
+  end
+
+  def resize
+    @availability = Availability.find_by_id(params[:id])
+    if @availability
+      @availability.end = (params[:minute_delta].to_i).minutes.from_now((params[:day_delta].to_i).days.from_now(@availability.end))
+      @availability.save
+    end
+    render :nothing => true
+  end
+
+  def destroy
+    @availability = Availability.find_by(id: params[:id])
+    @availability.destroy
+    render :nothing => true
   end
 
   private
